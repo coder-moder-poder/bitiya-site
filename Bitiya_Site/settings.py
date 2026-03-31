@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bitiyagram.ru', 'www.bitiyagram.ru', 'bitiya-site.tw1.su']
 
 # Добавьте все ваши приложения
 INSTALLED_APPS = [
