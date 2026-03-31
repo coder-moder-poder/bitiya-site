@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать статью - {{ article.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+        color: #2c5e2e;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: inherit;
+    }
+    
+    .btn-save {
+        background: #2c5e2e;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    
+    .btn-cancel {
+        background: #999;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-save:hover {
+        background: #1e401f;
+    }
+    
+    .btn-cancel:hover {
+        background: #666;
+    }
+    
+    .current-image {
+        margin: 10px 0;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+    
+    .current-image img {
+        max-width: 200px;
+        border-radius: 5px;
+    }
+    
+    .django-ckeditor-widget {
+        width: 100% !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <h2>Редактирование статьи</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Заголовок</label>
+            {{ form.title }}
+        </div>
+        
+        <div class="form-group">
+            <label>Краткое описание</label>
+            {{ form.excerpt }}
+        </div>
+        
+        <div class="form-group">
+            <label>Содержание</label>
+            {{ form.content }}
+        </div>
+        
+        <div class="form-group">
+            <label>Категория</label>
+            {{ form.category }}
+        </div>
+        
+        <div class="form-group">
+            <label>Главное изображение</label>
+            {% if article.image %}
+            <div class="current-image">
+                <p>Текущее изображение:</p>
+                <img src="{{ article.image.url }}" alt="{{ article.title }}">
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">Загрузите новое, чтобы заменить</p>
+            </div>
+            {% endif %}
+            {{ form.image }}
+        </div>
+        
+        <button type="submit" class="btn-save">Сохранить изменения</button>
+        <a href="{% url 'articles:article_detail' slug=article.slug %}" class="btn-cancel">Отмена</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ form.media }}
+{% endblock %}

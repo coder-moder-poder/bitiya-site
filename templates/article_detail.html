@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} - Деревня Бития{% endblock %}
+
+{% block extra_css %}
+<style>
+    .article-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .article-title {
+        font-size: 42px;
+        color: #2c5e2e;
+        margin-bottom: 20px;
+    }
+    
+    .article-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background: #f9f5ed;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 4px solid #d4a373;
+    border-right: 4px solid #d4a373;
+    text-align: center;
+    }
+
+    .meta-items {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #5a4a3a;
+        font-size: 14px;
+    }
+
+    .meta-item strong {
+        color: #2c5e2e;
+        font-weight: 600;
+    }
+
+    .meta-divider {
+        color: #d4a373;
+        font-size: 14px;
+    }
+
+    
+    .article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e0d5c0;
+    }
+
+    .like-section {
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+
+    .back-link {
+        display: inline-block;
+        color: #2c5e2e;
+        text-decoration: none;
+        padding: 10px 20px;
+        border: 1px solid #2c5e2e;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .back-link:hover {
+        background: #2c5e2e;
+        color: white;
+    }
+
+    .like-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 25px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 15px;
+        font-family: inherit;
+        text-decoration: none;
+        color: #5a4a3a;
+    }
+
+    .like-btn:hover {
+        background: #f5f0e6;
+        transform: scale(1.02);
+    }
+
+    .like-btn.liked {
+        background: #ffd966;
+        border-color: #d4a373;
+        color: #2c5e2e;
+    }
+
+    .like-btn.liked:hover {
+        background: #ffcd38;
+    }
+
+    .like-count {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+
+        /* Для мобильных устройств */
+    @media (max-width: 600px) {
+        .article-footer {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+        
+        .like-section {
+            text-align: center;
+        }
+        
+        .back-link {
+            text-align: center;
+        }
+    }
+
+    
+    .article-content h1, .article-content h2, .article-content h3 {
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        color: #2c5e2e;
+    }
+    
+    .article-content h1 { font-size: 32px; }
+    .article-content h2 { font-size: 28px; }
+    .article-content h3 { font-size: 24px; }
+    
+    .article-content p {
+        margin-bottom: 1em;
+    }
+    
+    .article-content ul, .article-content ol {
+        margin-left: 2em;
+        margin-bottom: 1em;
+    }
+    
+    .article-content li {
+        margin-bottom: 0.5em;
+    }
+    
+    .article-image {
+        margin: 30px auto;
+        text-align: center;
+    }
+    
+    .article-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: block;
+        margin: 0 auto;
+    }
+    
+    /* Для фотографий внутри текста статьи (если через редактор) */
+    .article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: block;
+        margin: 20px auto;
+    }
+    
+    .article-content figure {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .article-content figure img {
+        display: inline-block;
+        margin: 0 auto;
+    }
+    
+    .article-content figcaption {
+        font-size: 14px;
+        color: #666;
+        margin-top: 8px;
+        text-align: center;
+    }
+    
+    .article-content blockquote {
+        border-left: 4px solid #d4a373;
+        padding-left: 20px;
+        margin: 1em 0;
+        color: #666;
+        font-style: italic;
+    }
+    
+    .article-content a {
+        color: #2c5e2e;
+        text-decoration: underline;
+    }
+    
+    .article-content strong {
+        font-weight: bold;
+    }
+    
+    .article-content em {
+        font-style: italic;
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        margin-bottom: 40px;
+        color: #2c5e2e;
+        text-decoration: none;
+        padding: 10px 20px;
+        border: 1px solid #2c5e2e;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+    
+    .back-link:hover {
+        background: #2c5e2e;
+        color: white;
+    }
+    
+    .comments-section {
+        margin-top: 20px;
+        padding-top: 40px;
+        border-top: 2px solid #ddd;
+    }
+    
+    .comments-title {
+        color: #2c5e2e;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+    
+    .comment-form {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 40px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: inherit;
+    }
+    
+    .btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #2c5e2e;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn:hover {
+        background: #1e401f;
+    }
+    
+    .comment {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #eee;
+    }
+    
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .comment-author {
+        color: #2c5e2e;
+        font-weight: bold;
+    }
+    
+    .comment-date {
+        color: #999;
+        font-size: 12px;
+    }
+    
+    .reply-btn {
+        margin-top: 10px;
+        background: none;
+        border: none;
+        color: #2c5e2e;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .reply-form {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+    }
+    
+    .reply {
+        margin-top: 15px;
+        margin-left: 30px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+    }
+    
+    .empty-comments {
+        text-align: center;
+        color: #666;
+        padding: 40px;
+    }
+    
+    .msg-link {
+    background: #2c5e2e;
+    color: white !important;
+    padding: 6px 16px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    }
+
+    .msg-link:hover {
+        background: #1e401f;
+        transform: translateY(-1px);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="article-header">
+    <h1 class="article-title">{{ article.title }}</h1>
+    <div class="article-meta">
+        <div class="meta-items">
+            <div class="meta-item">
+                <strong>Автор:</strong> {{ article.author.username }}
+            </div>
+            
+            {% if user.is_authenticated and user != article.author %}
+                <a href="{% url 'messaging:send_message' username=article.author.username %}" class="msg-link">
+                    Написать сообщение
+                </a>
+            {% endif %}
+            
+            <div class="meta-item">
+                <strong> Дата:</strong> {{ article.created_at|date:"d.m.Y" }}
+            </div>
+            
+            <div class="meta-item">
+                <strong> Просмотров:</strong> {{ article.views }}
+            </div>
+            
+            
+        </div>
+    </div>
+
+</div>
+
+{% if article.image %}
+<div class="article-image">
+    <img src="{{ article.image.url }}" alt="{{ article.title }}">
+</div>
+{% endif %}
+
+<div class="article-content">
+    {{ article.content|safe }}
+</div>
+
+<div class="article-footer">
+    <a href="{% url 'articles:article_list' %}" class="back-link">← Вернуться к списку статей</a>
+    
+    <div class="like-section">
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'articles:toggle_like' article.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="like-btn {% if user in article.likes.all %}liked{% endif %}">
+                    ❤️ <span class="like-count">{{ article.likes.count }}</span> <span></span>
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="like-btn">
+                ❤️ <span class="like-count">{{ article.likes.count }}</span> <span></span>
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+<div class="comments-section">
+    <h2 class="comments-title">Комментарии ({{ comments.count }})</h2>
+    
+    {% if user.is_authenticated %}
+        <div class="comment-form">
+            <h3>Оставить комментарий</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.content }}
+                <button type="submit" class="btn">Отправить</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="comment-form" style="text-align: center;">
+            <p><a href="{% url 'accounts:login' %}" style="color: #2c5e2e;">Войдите</a> или <a href="{% url 'accounts:register' %}" style="color: #2c5e2e;">зарегистрируйтесь</a>, чтобы оставить комментарий.</p>
+        </div>
+    {% endif %}
+    
+    <div class="comments-list">
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">{{ comment.author.username }}</span>
+                    <span class="comment-date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="comment-content">
+                    {{ comment.content|linebreaks }}
+                </div>
+                
+                {% if user.is_authenticated %}
+                    <button class="reply-btn" onclick="document.getElementById('reply-form-{{ comment.id }}').style.display='block'">↩ Ответить</button>
+                    
+                    <div id="reply-form-{{ comment.id }}" class="reply-form">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <textarea name="content" rows="2" class="form-control" placeholder="Ваш ответ..."></textarea>
+                            <button type="submit" class="btn" style="margin-top: 10px;">Ответить</button>
+                            <button type="button" onclick="document.getElementById('reply-form-{{ comment.id }}').style.display='none'" style="margin-left: 10px; padding: 10px 20px; background: #999; color: white; border: none; border-radius: 5px; cursor: pointer;">Отмена</button>
+                        </form>
+                    </div>
+                {% endif %}
+                
+                {% for reply in comment.replies.all %}
+                    <div class="reply">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ reply.author.username }}</span>
+                            <span class="comment-date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
+                        </div>
+                        <div class="comment-content">
+                            {{ reply.content|linebreaks }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% empty %}
+            <div class="empty-comments">
+                <p>Пока нет комментариев. Будьте первым!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

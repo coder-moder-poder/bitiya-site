@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Деревня Бития{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f8f4e8 0%, #efe6d8 100%);
+            color: #2c2b28;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Шапка */
+        .navbar {
+            background: linear-gradient(135deg, #2d5a2a 0%, #1e3a1c 100%);
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #d4a373;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            color: #ffd966;
+            font-size: 26px;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        
+        .logo:hover {
+            color: #ffcd38;
+            transform: scale(1.02);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+            border-bottom-color: #ffd966;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+        
+        /* Подвал */
+        .footer {
+            background: linear-gradient(135deg, #1e3a1c 0%, #0f2a0d 100%);
+            color: #e8e0c5;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid #d4a373;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #2d5a2a 0%, #1e3a1c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #3c6e38 0%, #2a4f27 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #d4a373 0%, #c28b5a 100%);
+            color: #2c2b28;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e0b58a 0%, #d4a373 100%);
+        }
+        
+        .alert {
+            background: #e8e0c5;
+            color: #2d5a2a;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #d4a373;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* Модальное окно для выхода */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-content h3 {
+            color: #2d5a2a;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-content p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .modal-buttons button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-confirm:hover {
+            background: #c82333;
+        }
+        
+        .btn-cancel {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-cancel:hover {
+            background: #dee2e6;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .main-content {
+                margin: 30px auto;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                padding: 25px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">Битияgram</a>
+            <div class="nav-links">
+                <a href="{% url 'home' %}">Главная</a>
+                <a href="{% url 'articles:article_list' %}">Все статьи</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'messaging:inbox' %}">Сообщения</a>
+                    <a href="{% url 'accounts:profile' username=user.username %}">Мой профиль</a>
+                    <a href="#" onclick="showLogoutModal(event)">Выйти</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}">Войти</a>
+                    <a href="{% url 'accounts:register' %}">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <main class="main-content">
+        {% if messages %}
+            {% for message in messages %}
+                <!-- Временно скрыто -->
+                {# <div class="alert">{{ message }}</div> #}
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Деревня Бития, Абатский район, Тюменская область</p>
+            <p>Основана в 1710 году</p>
+            <p style="margin-top: 15px; font-size: 12px;">© 2026 Все права защищены</p>
+        </div>
+    </footer>
+    
+    <!-- Модальное окно подтверждения выхода -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Выход из аккаунта</h3>
+            <p>Вы действительно хотите выйти из своего аккаунта?</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" onclick="confirmLogout()">Да, выйти</button>
+                <button class="btn-cancel" onclick="closeLogoutModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showLogoutModal(event) {
+            event.preventDefault();
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+        
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        function confirmLogout() {
+            window.location.href = "{% url 'accounts:logout' %}";
+        }
+        
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

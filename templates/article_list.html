@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if query %}Поиск: {{ query }} - {% endif %}Все статьи - Деревня Бития
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .page-header h1 {
+        font-size: 36px;
+        color: #2c5e2e;
+        margin-bottom: 10px;
+    }
+    
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto 40px;
+    }
+    
+    .search-form {
+        display: flex;
+        gap: 10px;
+        background: white;
+        padding: 5px;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .search-input {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        outline: none;
+        font-family: inherit;
+    }
+    
+    .search-btn {
+        padding: 12px 30px;
+        background: #2c5e2e;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+    }
+    
+    .search-btn:hover {
+        background: #1e401f;
+    }
+    
+    .search-info {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #666;
+    }
+    
+    .create-btn-container {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+    }
+    
+    .article-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+    
+    .article-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .article-image {
+        height: 200px;
+        background: #ddd;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .article-content {
+        padding: 20px;
+    }
+    
+    .article-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #2c5e2e;
+    }
+    
+    .article-excerpt {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .article-meta {
+        font-size: 14px;
+        color: #999;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        gap: 10px;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 8px 15px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #2c5e2e;
+    }
+    
+    .pagination .current {
+        background: #2c5e2e;
+        color: white;
+        border-color: #2c5e2e;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 10px;
+        color: #666;
+        grid-column: 1/-1;
+    }
+    
+    .msg-link {
+        color: #2c5e2e;
+        text-decoration: none;
+        font-size: 18px;
+    }
+    
+    .msg-link:hover {
+        opacity: 0.7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Все статьи и публикации</h1>
+</div>
+
+<div class="search-container">
+    <form method="get" class="search-form">
+        <input type="text" name="q" class="search-input" placeholder="Поиск по заголовкам, тексту или автору..." value="{{ query }}">
+        <button type="submit" class="search-btn">Найти</button>
+    </form>
+</div>
+
+{% if query %}
+<div class="search-info">
+    Результаты поиска по запросу <strong>"{{ query }}"</strong> — найдено <strong>{{ articles.paginator.count }}</strong> статей
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<div class="create-btn-container">
+    <a href="{% url 'articles:create_article' %}" class="btn btn-primary">Написать статью</a>
+</div>
+{% endif %}
+
+<div class="articles-grid">
+    {% for article in articles %}
+        <div class="article-card">
+            <a href="{% url 'articles:article_detail' slug=article.slug %}">
+                <div class="article-image" style="background-image: url('{% if article.image %}{{ article.image.url }}{% else %}https://via.placeholder.com/350x200?text=Бития{% endif %}')"></div>
+                <div class="article-content">
+                    <h3 class="article-title">{{ article.title }}</h3>
+                    <p class="article-excerpt">{{ article.excerpt|truncatechars:120 }}</p>
+                    <div class="article-meta">
+                        <span>Автор: {{ article.author.username }}</span>
+                        <span>Дата: {{ article.created_at|date:"d.m.Y" }}</span>
+                        <span>Лайков: {{ article.likes.count }}</span>
+                        {% if user.is_authenticated and user != article.author %}
+                            <a href="{% url 'messaging:send_message' username=article.author.username %}" class="msg-link">Написать сообщение</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% empty %}
+        <div class="no-results">
+            {% if query %}
+                <p>😕 По запросу <strong>"{{ query }}"</strong> ничего не найдено.</p>
+                <p>Попробуйте изменить поисковый запрос или <a href="{% url 'articles:article_list' %}" style="color: #2c5e2e;">посмотреть все статьи</a>.</p>
+            {% else %}
+                <p>😕 Пока нет статей. Будьте первым, кто поделится воспоминаниями!</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'articles:create_article' %}" class="btn btn-primary">✍️ Написать первую статью</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{% if articles.has_other_pages %}
+<div class="pagination">
+    {% if articles.has_previous %}
+        <a href="?page={{ articles.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">← Предыдущая</a>
+    {% endif %}
+    
+    <span class="current">
+        Страница {{ articles.number }} из {{ articles.paginator.num_pages }}
+    </span>
+    
+    {% if articles.has_next %}
+        <a href="?page={{ articles.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Следующая →</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

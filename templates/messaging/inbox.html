@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Сообщения - Деревня Бития{% endblock %}
+
+{% block extra_css %}
+<style>
+    .inbox-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .inbox-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .inbox-header h1 {
+        color: #2c5e2e;
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+    
+    .inbox-header p {
+        color: #8b7a66;
+        font-size: 14px;
+    }
+    
+    .conversations-list {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+    
+    .conversation-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid #f0e8dc;
+        transition: all 0.2s;
+        text-decoration: none;
+        background: white;
+    }
+    
+    .conversation-item:hover {
+        background: #fefaf5;
+        transform: translateX(3px);
+    }
+    
+    .conversation-info {
+        flex: 1;
+    }
+    
+    .conversation-user {
+        font-weight: 600;
+        color: #2c5e2e;
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+    
+    .conversation-last-message {
+        color: #9b8a74;
+        font-size: 13px;
+        line-height: 1.4;
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .conversation-meta {
+        text-align: right;
+        min-width: 70px;
+    }
+    
+    .conversation-time {
+        font-size: 11px;
+        color: #b8a68c;
+        margin-bottom: 6px;
+    }
+    
+    .unread-badge {
+        background: #dc3545;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        display: inline-block;
+    }
+    
+    .empty-inbox {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #eee;
+    }
+    
+    .empty-inbox p {
+        margin-bottom: 15px;
+        color: #9b8a74;
+        font-size: 16px;
+    }
+    
+    .empty-inbox a {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="inbox-container">
+    <div class="inbox-header">
+        <h1>Личные сообщения</h1>
+        <p>Ваши диалоги с жителями деревни</p>
+    </div>
+    
+    <div class="conversations-list">
+        {% for conv in conversations %}
+            <a href="{% url 'messaging:conversation' conv.id %}" class="conversation-item">
+                <div class="conversation-info">
+                    <div class="conversation-user">
+                        {{ conv.other_user.first_name|default:conv.other_user.username }}
+                    </div>
+                    {% if conv.last_msg %}
+                        <div class="conversation-last-message">
+                            {{ conv.last_msg.content|truncatechars:50 }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="conversation-meta">
+                    {% if conv.last_msg %}
+                        <div class="conversation-time">
+                            {{ conv.last_msg.created_at|date:"d.m.Y" }}
+                        </div>
+                    {% endif %}
+                    {% if conv.unread > 0 %}
+                        <div class="unread-badge">{{ conv.unread }}</div>
+                    {% endif %}
+                </div>
+            </a>
+        {% empty %}
+            <div class="empty-inbox">
+                <p>📭 У вас пока нет диалогов</p>
+                <p>Напишите кому-нибудь из жителей деревни!</p>
+                <a href="{% url 'articles:article_list' %}" class="btn btn-primary">Посмотреть статьи</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

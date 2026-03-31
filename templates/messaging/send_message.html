@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Отправить сообщение - Деревня Бития{% endblock %}
+
+{% block extra_css %}
+<style>
+    .send-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+        color: #2c5e2e;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .recipient-info {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .message-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: inherit;
+        resize: vertical;
+    }
+    
+    .btn-send {
+        width: 100%;
+        padding: 12px;
+        background: #2c5e2e;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+    
+    .btn-send:hover {
+        background: #1e401f;
+    }
+    
+    .btn-cancel {
+        width: 100%;
+        padding: 12px;
+        background: #999;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+    }
+    
+    .btn-cancel:hover {
+        background: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="send-container">
+    <h2>Отправить сообщение</h2>
+    
+    <div class="recipient-info">
+        <strong>Кому:</strong> {{ recipient.first_name|default:recipient.username }}
+        {% if recipient.first_name %}
+            <span style="color: #999;">(@{{ recipient.username }})</span>
+        {% endif %}
+    </div>
+    
+    <form method="post" class="message-form">
+        {% csrf_token %}
+        <textarea name="content" rows="6" placeholder="Напишите ваше сообщение..." required></textarea>
+        <button type="submit" class="btn-send">Отправить сообщение</button>
+        <a href="{% url 'accounts:profile' username=recipient.username %}" class="btn-cancel">Отмена</a>
+    </form>
+</div>
+{% endblock %}
