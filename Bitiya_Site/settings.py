@@ -9,6 +9,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['bitiyagram.ru', 'www.bitiyagram.ru', 'coder-moder-poder-bitiya-site-4c6e.twc1.net',]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://coder-moder-poder-bitiya-site-4c6e.twc1.net',
+    'http://coder-moder-poder-bitiya-site-4c6e.twc1.net',
+    'https://bitiyagram.ru',
+    'http://bitiyagram.ru',
+]
+
 # Добавьте все ваши приложения
 INSTALLED_APPS = [
     'django.contrib.admin',
