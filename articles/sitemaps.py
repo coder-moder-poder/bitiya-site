@@ -1,12 +1,14 @@
 from django.contrib.sitemaps import Sitemap
-from .models import Article  # Убедитесь, что у вас модель называется Article
+from .models import Article  # У вас модель называется Article
 
 class ArticleSitemap(Sitemap):
     changefreq = 'weekly'
     priority = 0.8
 
     def items(self):
-        return Article.objects.all()
+        # Берём только опубликованные статьи
+        return Article.objects.filter(is_published=True)
 
     def lastmod(self, obj):
-        return obj.created_at
+        # Используем поле updated_at, которое есть в модели
+        return obj.updated_at
