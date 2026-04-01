@@ -20,7 +20,7 @@ urlpatterns = [
     path('yandex_1bbf0002d59d9074.html', TemplateView.as_view(template_name='yandex_1bbf0002d59d9074.html', content_type='text/html')),
     
     # Правильный способ для Django 6.0.3:
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    path('sitemap.xml', TemplateView.as_view(template_name='sitemap.xml', content_type='application/xml'), name='sitemap'),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap_section'),
 ]
 
