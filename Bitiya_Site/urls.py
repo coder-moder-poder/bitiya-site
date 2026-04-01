@@ -11,15 +11,13 @@ sitemaps = {
     'articles': ArticleSitemap,
 }
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('articles/', include('articles.urls')),
     path('accounts/', include('accounts.urls')),
     path('messages/', include('messaging.urls')),
-    # path('ckeditor/', include('ckeditor_uploader.urls')),  # Добавьте эту строку
-    path('yandex_123456.html', TemplateView.as_view(template_name='yandex_123456.html', content_type='text/html')),
+    path('yandex_1bbf0002d59d9074.html', TemplateView.as_view(template_name='yandex_1bbf0002d59d9074.html', content_type='text/html')),
     path('sitemap.xml', sitemap_view, {'sitemaps': sitemaps}, name='sitemap'),
 ]
 
