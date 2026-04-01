@@ -30,6 +30,11 @@ class Article(models.Model):
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
     views = models.PositiveIntegerField('Просмотры', default=0)
     is_published = models.BooleanField('Опубликовано', default=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # добавляем это поле
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return self.title
     
     class Meta:
         ordering = ['-created_at']
