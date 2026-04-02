@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: bitiya_db
+      POSTGRES_USER: bitiya_user
+      POSTGRES_PASSWORD: your_strong_password_here
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bitiya_user -d bitiya_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal_network
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://bitiya_user:your_strong_password_here@db:5432/bitiya_db
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
