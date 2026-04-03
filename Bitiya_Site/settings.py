@@ -11,7 +11,12 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['bitiyagram.ru', 'www.bitiyagram.ru', 'coder-moder-poder-bitiya-site-4c6e.twc1.net', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['bitiyagram.ru',
+                'www.bitiyagram.ru',
+                'coder-moder-poder-bitiya-site-4c6e.twc1.net',
+                'coder-moder-poder-bitiya-site-8c82.twc1.net',
+                '127.0.0.1', 
+                'localhost']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://coder-moder-poder-bitiya-site-4c6e.twc1.net',
