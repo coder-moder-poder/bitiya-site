@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:17
     restart: always
-    volumes:                               # <-- ЭТО НУЖНО, ЭТО ПРАВИЛЬНО
-      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: bitiya_db
       POSTGRES_USER: bitiya_user
@@ -24,6 +22,3 @@ services:
 networks:
   internal_network:
     driver: bridge
-
-volumes:                                  # <-- ЭТО НУЖНО, ЭТО ПРАВИЛЬНО
-  postgres_data:
