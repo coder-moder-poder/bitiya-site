@@ -14,6 +14,7 @@ services:
     restart: always
     depends_on:
       - db
+    command: sh -c "python manage.py migrate && gunicorn Bitiya_Site.wsgi:application --bind 0.0.0.0:8000"
     environment:
       DATABASE_URL: postgresql://bitiya_user:Shalashino1720@db:5432/bitiya_db
     networks:
