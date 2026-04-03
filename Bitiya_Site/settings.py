@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,7 +11,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['bitiyagram.ru', 'www.bitiyagram.ru', 'coder-moder-poder-bitiya-site-4c6e.twc1.net',]
+ALLOWED_HOSTS = ['bitiyagram.ru', 'www.bitiyagram.ru', 'coder-moder-poder-bitiya-site-4c6e.twc1.net', '127.0.0.1', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://coder-moder-poder-bitiya-site-4c6e.twc1.net',

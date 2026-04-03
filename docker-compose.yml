@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: bitiya_db
       POSTGRES_USER: bitiya_user
-      POSTGRES_PASSWORD: your_strong_password_here
+      POSTGRES_PASSWORD: Shalashino1720
     networks:
       - internal_network
 
@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql://bitiya_user:your_strong_password_here@db:5432/bitiya_db
+      DATABASE_URL: postgresql://bitiya_user:Shalashino1720@db:5432/bitiya_db
     networks:
       - internal_network
 
