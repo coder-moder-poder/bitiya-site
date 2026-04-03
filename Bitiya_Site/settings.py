@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-import dj_database_url
-from dotenv import load_dotenv
+# import dj_database_url
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,7 +14,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['bitiyagram.ru',
                 'www.bitiyagram.ru',
                 'coder-moder-poder-bitiya-site-4c6e.twc1.net',
-                'coder-moder-poder-bitiya-site-8c82.twc1.net',
                 '127.0.0.1', 
                 'localhost']
 
@@ -90,10 +89,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Bitiya_Site.wsgi.application'
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
