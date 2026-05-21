@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="friends-header-page">
+        <a href="{% url 'accounts:profile' profile_user.username %}" class="back-link">← Назад к профилю</a>
+        <h1>Друзья {{ profile_user.first_name|default:profile_user.username }}</h1>
+    </div>
+    
+    {% if friends %}
+        <div class="friends-full-list">
+            {% for friend in friends %}
+                <div class="friend-full-card">
+                    <a href="{% url 'accounts:profile' friend.username %}" class="friend-full-link">
+                        <div class="friend-full-avatar">
+                            {% if friend.profile.avatar %}
+                                <img src="{{ friend.profile.avatar.url }}" alt="avatar">
+                            {% else %}
+                                <img src="/media/avatars/default.png" alt="avatar" >
+                            {% endif %}
+                        </div>
+                        <div class="friend-full-info">
+                            <strong>{{ friend.first_name|default:friend.username }}</strong>
+                            <span class="username">@{{ friend.username }}</span>
+                            {% if friend.profile.bio %}
+                                <p class="friend-bio">{{ friend.profile.bio|truncatechars:60 }}</p>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-friends">😔 У пользователя пока нет друзей</p>
+    {% endif %}
+</div>
+
+<style>
+    .friends-header-page {
+        margin-bottom: 30px;
+    }
+    .back-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .friends-header-page h1 {
+        margin-top: 10px;
+    }
+    .friends-full-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .friend-full-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 15px;
+        transition: box-shadow 0.3s;
+    }
+    .friend-full-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .friend-full-link {
+        display: flex;
+        gap: 15px;
+        text-decoration: none;
+        color: inherit;
+    }
+    .friend-full-avatar img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .friend-full-info strong {
+        font-size: 18px;
+        display: block;
+    }
+    .friend-full-info .username {
+        color: gray;
+        font-size: 14px;
+    }
+    .friend-bio {
+        margin-top: 5px;
+        color: #555;
+        font-size: 14px;
+    }
+    .no-friends {
+        text-align: center;
+        padding: 50px;
+        color: #999;
+    }
+</style>
+{% endblock %}

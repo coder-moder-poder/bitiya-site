@@ -26,77 +26,96 @@
     }
     
     .conversations-list {
-        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        background: #fff;
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border: 1px solid #eee;
     }
     
     .conversation-item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 18px 20px;
-        border-bottom: 1px solid #f0e8dc;
-        transition: all 0.2s;
+        gap: 15px;
+        padding: 15px 20px;
         text-decoration: none;
-        background: white;
+        color: inherit;
+        transition: background 0.2s;
+        border-bottom: 1px solid #f0f0f0;
     }
     
     .conversation-item:hover {
-        background: #fefaf5;
-        transform: translateX(3px);
+        background: #f9f9f9;
+    }
+
+    /* Аватарка */
+    .conversation-avatar {
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
     }
     
+    .conversation-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Информация о собеседнике */
     .conversation-info {
         flex: 1;
+        min-width: 0;
     }
     
     .conversation-user {
         font-weight: 600;
         color: #2c5e2e;
-        font-size: 16px;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
     
     .conversation-last-message {
-        color: #9b8a74;
         font-size: 13px;
-        line-height: 1.4;
-        max-width: 300px;
+        color: #888;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
     
+    /* Мета-информация */
     .conversation-meta {
         text-align: right;
-        min-width: 70px;
+        flex-shrink: 0;
     }
     
     .conversation-time {
         font-size: 11px;
-        color: #b8a68c;
+        color: #bbb;
         margin-bottom: 6px;
     }
     
     .unread-badge {
-        background: #dc3545;
+        background: #c6c5c5;
         color: white;
-        padding: 3px 8px;
         border-radius: 20px;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
         font-size: 11px;
-        font-weight: bold;
-        display: inline-block;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     
+    /* Пустой список */
     .empty-inbox {
         text-align: center;
-        padding: 60px 20px;
+        padding: 50px 20px;
         background: white;
         border-radius: 16px;
-        border: 1px solid #eee;
+        color: #888;
     }
     
     .empty-inbox p {
@@ -106,7 +125,13 @@
     }
     
     .empty-inbox a {
-        margin-top: 10px;
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #2c5e2e;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
     }
 </style>
 {% endblock %}
@@ -115,16 +140,28 @@
 <div class="inbox-container">
     <div class="inbox-header">
         <h1>Личные сообщения</h1>
-        <p>Ваши диалоги с жителями деревни</p>
     </div>
     
     <div class="conversations-list">
         {% for conv in conversations %}
             <a href="{% url 'messaging:conversation' conv.id %}" class="conversation-item">
+                <div class="conversation-avatar">
+                    {% if conv.other_user.profile.avatar %}
+                        <img src="{{ conv.other_user.profile.avatar.url }}" alt="{{ conv.other_user.username }}">
+                    {% else %}
+                        <img src="/media/avatars/default.png" alt="{{ conv.other_user.username }}">
+                    {% endif %}
+                </div>
                 <div class="conversation-info">
-                    <div class="conversation-user">
-                        {{ conv.other_user.first_name|default:conv.other_user.username }}
-                    </div>
+                    {% if conv.other_user %}
+                        <div class="conversation-user">
+                            {{ conv.other_user.first_name|default:conv.other_user.username }}
+                        </div>
+                    {% else %}
+                        <div class="conversation-user">
+                            [Удалённый пользователь]
+                        </div>
+                    {% endif %}
                     {% if conv.last_msg %}
                         <div class="conversation-last-message">
                             {{ conv.last_msg.content|truncatechars:50 }}
@@ -134,7 +171,7 @@
                 <div class="conversation-meta">
                     {% if conv.last_msg %}
                         <div class="conversation-time">
-                            {{ conv.last_msg.created_at|date:"d.m.Y" }}
+                            {{ conv.last_msg.created_at|date:"d.m.Y H:i" }}
                         </div>
                     {% endif %}
                     {% if conv.unread > 0 %}
@@ -151,4 +188,5 @@
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}

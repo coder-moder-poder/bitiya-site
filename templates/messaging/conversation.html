@@ -4,192 +4,857 @@
 
 {% block extra_css %}
 <style>
+
+
+    /* Контейнер чата */
     .chat-container {
-        max-width: 700px;
-        margin: 0 auto;
-        background: white;
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        background: rgb(255, 255, 255);
         border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         display: flex;
         flex-direction: column;
-        height: 70vh;
-        border: 1px solid #eee;
+        height: 80vh;
+        max-height: 700px;
     }
-    
+
+    /* Шапка чата */
     .chat-header {
-        background: #2c5e2e;
-        padding: 16px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-shrink: 0;
-    }
-    
-    .chat-header h2 {
+        padding: 12px 20px;
+        background: #2c5e2e;
         color: white;
-        font-size: 18px;
-        margin: 0;
-        font-weight: 500;
     }
-    
-    .chat-header a {
-        color: #ffd966;
+
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .chat-avatar-link {
+    display: inline-block;
+    line-height: 0;
+    text-decoration: none;
+    }
+
+    .chat-username-link {
+        text-decoration: none;
+        color: white;
+        transition: opacity 0.2s;
+    }
+
+    .chat-username-link:hover {
+        opacity: 0.8;
+    }
+
+    chat-header-info h2 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .chat-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .chat-header-actions a {
+        color: #d6d6d6;
         text-decoration: none;
         font-size: 14px;
     }
-    
-    /* Только здесь сообщения */
-    .messages-list {
+
+    .chat-header-actions a:hover {
+        color: #ffd966;
+    }
+
+    .delete-chat-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #ffd966;
+        transition: color 0.2s;
+        padding: 0;
+        width: 37px;
+        height: 37px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delete-chat-btn:hover {
+        background: #28562a;
+        border-radius: 20px;
+    }
+
+    /* Область с сообщениями (прокручиваемая) */
+    .messages-wrapper {
         flex: 1;
         overflow-y: auto;
-        padding: 20px;
-        background: #fefaf5;
+        padding: 15px;
+        background: #f5f5f5;
+    }
+
+    /* Список сообщений */
+    .messages-list {
         display: flex;
         flex-direction: column;
         gap: 12px;
     }
-    
-    .message-bubble {
+
+    /* Общий контейнер сообщения */
+    .message-wrapper {
+        display: flex;
+        flex-direction: column;
         max-width: 70%;
+    }
+
+    /* Свои сообщения — справа */
+    .message-wrapper.sent {
+        align-self: flex-end;
+    }
+
+    /* Чужие сообщения — слева */
+    .message-wrapper.received {
+        align-self: flex-start;
+    }
+
+    /* Пузырь сообщения */
+    .message-bubble {
         padding: 10px 14px;
         border-radius: 18px;
         word-wrap: break-word;
     }
-    
+
+    /* Своё сообщение */
     .message-sent {
-        align-self: flex-end;
-        background: #2c5e2e;
+        background-color: #2c5e2e;
         color: white;
         border-bottom-right-radius: 4px;
     }
-    
+
+    /* Чужое сообщение */
     .message-received {
-        align-self: flex-start;
-        background: white;
-        color: #2c2b28;
-        border: 1px solid #e8e0d0;
+        background-color: white;
+        color: #333;
+        border: 1px solid #ddd;
         border-bottom-left-radius: 4px;
     }
-    
-    .message-text {
-        font-size: 14px;
-        line-height: 1.45;
-    }
-    
+
+    /* Время и кнопки */
     .message-time {
-        font-size: 10px;
-        margin-top: 5px;
-        opacity: 0.6;
-        text-align: right;
-    }
-    
-    .message-sent .message-time {
-        color: rgba(255,255,255,0.7);
-    }
-    
-    .message-received .message-time {
-        color: #b8a68c;
-    }
-    
-    .message-input-area {
-        padding: 16px 20px;
-        background: white;
-        border-top: 1px solid #eee;
-        flex-shrink: 0;
-    }
-    
-    .message-form {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
         display: flex;
-        gap: 12px;
+        justify-content: flex-end;
+        gap: 8px;
+        align-items: center;
     }
-    
-    .message-input {
-        flex: 1;
-        padding: 12px 16px;
-        border: 1px solid #e0d5c0;
-        border-radius: 30px;
-        font-size: 14px;
+
+    .message-wrapper.received .message-time {
+        justify-content: flex-start;
+    }
+
+    /* Область ввода сообщения */
+    .message-input-area {
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .message-form {
+        width: 100%;
+    }
+
+    .message-form-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .input-wrapper {
+        flex: 1;               /* ← растягивается на всю свободу */
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        background: #f5f5f5;
+        border-radius: 24px;
+        padding: 6px 12px;
+    }
+
+    /* Кнопки редактирования и удаления */
+    .edit-msg-btn, .delete-msg-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .edit-msg-btn {
+        color: #999;
+    }
+
+    .delete-msg-btn {
+        color: #dc3545;
+    }
+
+    .message-wrapper:hover .edit-msg-btn,
+    .message-wrapper:hover .delete-msg-btn {
+        opacity: 1;
+    }
+
+    /* Форма редактирования */
+    .edit-msg-form {
+        margin-top: 8px;
+        padding: 10px;
+        background: #f9f5ed;
+        border-radius: 12px;
+    }
+
+    .edit-textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
         font-family: inherit;
-        resize: none;
-        outline: none;
+        font-size: 14px;
+        resize: vertical;
     }
-    
-    .message-input:focus {
-        border-color: #2c5e2e;
+
+    .edit-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
     }
-    
-    .send-btn {
-        padding: 12px 24px;
+
+    .save-edit-btn {
         background: #2c5e2e;
         color: white;
         border: none;
-        border-radius: 30px;
+        border-radius: 20px;
+        padding: 5px 15px;
         cursor: pointer;
+    }
+
+    .cancel-edit-btn {
+        background: #999;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 5px 15px;
+        cursor: pointer;
+    }
+
+    .edited {
+        font-size: 10px;
+        color: #ccc;
+        margin-left: 5px;
+    }
+
+    .empty-messages {
+        text-align: center;
+        color: #999;
+        padding: 40px;
+    }
+
+    /* Прокрутка при авто-скролле */
+    .messages-wrapper {
+        scroll-behavior: smooth;
+    }
+
+    /* Обёртка для поля ввода и кнопки эмодзи */
+    .input-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;  /* ← было flex-end */
+        gap: 8px;
+        background: #f5f5f5;
+        border-radius: 24px;
+        padding: 6px 12px;
+    }
+
+    .message-input {
+        flex: 1;
+        border: none;
+        background: none;
+        padding: 8px 0;
+        resize: none;
+        font-family: inherit;
         font-size: 14px;
     }
-    
+
+    .message-input:focus {
+        outline: none;
+    }
+
+    .message-input::placeholder {
+        color: #aaa;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .input-buttons {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .picker-tab {
+        transition: all 0.2s;
+    }
+
+    .picker-tab.active {
+        color: #2c5e2e;
+        border-bottom: 2px solid #2c5e2e;
+        background: #f9f9f9;
+    }
+
+    /* Контент */
+    .picker-content {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    /* Кнопка вызова панели */
+    #picker-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    #picker-btn img {
+        width: 22px;
+        height: 22px;
+        opacity: 0.6;
+    }
+
+    #picker-btn:hover {
+        background: #e0e0e0;
+    }
+
+    #picker-btn:hover img {
+        opacity: 1;
+    }
+
+    /* Стикер в панели выбора */
+    .picker-sticker {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    /* Стикер в сообщении */
+    .message-sticker {
+        max-width: 250px;
+        max-height: 250px;
+        object-fit: contain;
+        border-radius: 16px;
+    }
+
+    .send-btn {
+        flex-shrink: 0;
+        background: #2c5e2e;
+        color: white;
+        border: none;
+        border-radius: 24px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+
     .send-btn:hover {
         background: #1e401f;
     }
-    
-    .empty-messages {
-        text-align: center;
-        color: #b8a68c;
-        padding: 40px 20px;
+
+    .photo-btn {
+        flex-shrink: 0;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 6px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s;
     }
+
+    .photo-btn:hover {
+        background: #e0e0e0;
+    }
+
+    .message-photo {
+        max-width: 300px;
+        max-height: 300px;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    /* Эмодзи в сообщениях (увеличенные) */
+    .message-content {
+        font-size: 18px; /* базовый размер текста в сообщениях */
+    }
+
+    .message-content span.emoji-in-message {
+        font-size: 28px;  /* увеличенные эмодзи */
+        display: inline-block;
+        vertical-align: middle;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="chat-container">
-    <div class="chat-header">
-        <h2>{{ other_user.first_name|default:other_user.username }}</h2>
-        <a href="{% url 'messaging:inbox' %}">← Все диалоги</a>
-    </div>
-    
-    <!-- ЕДИНСТВЕННОЕ МЕСТО ГДЕ ОТОБРАЖАЮТСЯ СООБЩЕНИЯ -->
-    <div class="messages-list" id="messages-list">
-        {% for msg in messages %}
-            <div class="message-bubble {% if msg.sender == user %}message-sent{% else %}message-received{% endif %}">
-                <div class="message-text">{{ msg.content|linebreaksbr }}</div>
-                <div class="message-time">{{ msg.created_at|date:"d.m.Y H:i" }}</div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <a href="{% url 'accounts:profile' other_user.username %}" class="chat-avatar-link">
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" alt="{{ other_user.username }}" class="chat-avatar">
+                    {% else %}
+                        <img src="/media/avatars/default.png" alt="{{ other_user.username }}" class="chat-avatar">
+                    {% endif %}
+                </a>
+                <a href="{% url 'accounts:profile' other_user.username %}" class="chat-username-link">
+                    <h2>{{ other_user.first_name|default:other_user.username }}</h2>
+                </a>
             </div>
-        {% empty %}
-            <div class="empty-messages">
-                Нет сообщений. Напишите что-нибудь!
+            <div class="chat-header-actions">
+                <button class="delete-chat-btn" onclick="deleteConversation()" title="Удалить диалог">
+                    <img src="/static/images/ведро.png" alt="Стикеры" style="width: 24px; height: 24px;">
+                </button>
+                <a href="{% url 'messaging:inbox' %}">← Все диалоги</a>
             </div>
-        {% endfor %}
-    </div>
-    
+        </div>
+        
+        <div class="messages-wrapper">
+            <div class="messages-list" id="messages-list">
+                {% for msg in messages %}
+                    <div class="message-wrapper {% if msg.sender == user %}sent{% else %}received{% endif %}" id="message-{{ msg.id }}">
+                        <div class="message-bubble {% if msg.sender == user %}message-sent{% else %}message-received{% endif %}">
+                            <div class="message-content" id="message-content-{{ msg.id }}">
+                                {{ msg.content|safe|linebreaksbr }}
+                                {% if msg.edited_at %}
+                                    <span class="edited">(ред.)</span>
+                                {% endif %}
+                            </div>
+                            <div class="message-time">
+                                {{ msg.created_at|date:"d.m.Y H:i" }}
+                                {% if msg.sender == user %}
+                                    {% if msg.can_edit %}
+                                        <button class="edit-msg-btn" data-id="{{ msg.id }}" onclick="showEditForm(this)" title="Редактировать">
+                                            <img src="/static/images/pen.png" alt="Стикеры" style="width: 16px; height: 16px;">
+                                        </button>
+                                    {% endif %}
+                                        <button class="delete-msg-btn" data-id="{{ msg.id }}" onclick="deleteMessage(this)" title="Удалить">
+                                            <img src="/static/images/delete.png" alt="Стикеры" style="width: 15px; height: 15px;">
+                                        </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Форма редактирования -->
+                        {% if msg.sender == user and msg.can_edit %}
+                            <div id="edit-form-{{ msg.id }}" class="edit-msg-form" style="display: none;">
+                                <textarea id="edit-content-{{ msg.id }}" rows="2" class="edit-textarea">{{ msg.content }}</textarea>
+                                <div class="edit-actions">
+                                    <button class="save-edit-btn" data-id="{{ msg.id }}" onclick="saveEdit(this)">💾 Сохранить</button>
+                                    <button class="cancel-edit-btn" data-id="{{ msg.id }}" onclick="cancelEdit(this)">Отмена</button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="empty-messages">
+                        Нет сообщений. Напишите что-нибудь!
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
     <div class="message-input-area">
-        <form method="post" class="message-form">
+        <form method="post" class="message-form" id="message-form" onsubmit="sendMessage(event)">
             {% csrf_token %}
-            <textarea name="content" class="message-input" rows="2" placeholder="Введите сообщение..." required></textarea>
-            <button type="submit" class="send-btn">Отправить</button>
+            <div class="message-form-container">
+                <label for="photo-upload" class="photo-btn" title="Отправить фото">
+                    <img src="/static/images/plus.png" alt="Стикеры" style="width: 25px; height: 25px;">
+                </label>
+                
+                <div class="input-wrapper">
+                    <textarea name="content" class="message-input" rows="2" placeholder="Введите сообщение..." required></textarea>
+                    <div class="input-buttons">
+                        <button type="button" id="picker-btn" title="Стикеры и эмодзи">
+                            <img src="/static/images/happy-face.png" alt="Стикеры" style="width: 24px; height: 24px;">
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="send-btn">Отправить</button>
+            </div>
         </form>
+        
+        <input type="file" id="photo-upload" accept="image/*" style="display: none;">
+
+            
+            <!-- Универсальная панель (стикеры + эмодзи) -->
+            <div id="universal-picker" style="display: none; position: fixed; bottom: 90px; right: 100px; width: 480px; background: white; border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); z-index: 9999; overflow: hidden;">
+                <!-- Вкладки -->
+                <div style="display: flex; border-bottom: 1px solid #eee;">
+                    <button type="button" id="tab-stickers" class="picker-tab" style="flex: 1; padding: 12px; background: none; border: none; font-size: 16px; cursor: pointer; font-weight: bold; color: #888;">Стикеры</button>
+                    <button type="button" id="tab-emojis" class="picker-tab" style="flex: 1; padding: 12px; background: none; border: none; font-size: 16px; cursor: pointer; font-weight: bold; color: #888;">Эмодзи</button>
+                </div>
+                
+                <!-- Контент для стикеров -->
+                <div id="stickers-content" class="picker-content" style="padding: 16px; max-height: 350px; overflow-y: auto;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/privalova.webp')">
+                            <img src="/static/stickers/privalova.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/васек.webp')">
+                            <img src="/static/stickers/васек.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/леха.webp')">
+                            <img src="/static/stickers/леха.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/мякиш.webp')">
+                            <img src="/static/stickers/мякиш.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/попка.webp')">
+                            <img src="/static/stickers/попка.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/попка2.webp')">
+                            <img src="/static/stickers/попка2.webp" class="picker-sticker"">
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; background: #f8f8f8; border-radius: 16px; padding: 8px; cursor: pointer;" onclick="insertSticker('/static/stickers/привалов.webp')">
+                            <img src="/static/stickers/привалов.webp" class="picker-sticker"">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Контент для эмодзи -->
+                <div id="emojis-content" class="picker-content" style="display: none; padding: 16px;">
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;">
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('😊')">😊</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('😂')">😂</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('❤️')">❤️</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('👍')">👍</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🔥')">🔥</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🎉')">🎉</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('😢')">😢</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('😍')">😍</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🙏')">🙏</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🥳')">🥳</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('😎')">😎</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('💪')">💪</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🤔')">🤔</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🥺')">🥺</span>
+                        <span style="font-size: 28px; cursor: pointer; text-align: center;" onclick="addEmoji('🤣')">🤣</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
 
-<script>
-    // Прокрутка вниз при загрузке
-    const msgList = document.getElementById('messages-list');
-    if (msgList) {
-        msgList.scrollTop = msgList.scrollHeight;
+<script>    
+    function showEditForm(btn) {
+        var msgId = btn.getAttribute('data-id');
+        var contentDiv = document.getElementById('message-content-' + msgId);
+        var editForm = document.getElementById('edit-form-' + msgId);
+        if (contentDiv) contentDiv.style.display = 'none';
+        if (editForm) editForm.style.display = 'block';
+        btn.style.display = 'none';
     }
-    
-    // Прокрутка после отправки
-    const form = document.querySelector('.message-form');
-    if (form) {
-        form.addEventListener('submit', function() {
-            setTimeout(() => {
-                if (msgList) {
-                    msgList.scrollTop = msgList.scrollHeight;
-                }
-            }, 100);
+
+    function cancelEdit(btn) {
+        var msgId = btn.getAttribute('data-id');
+        var contentDiv = document.getElementById('message-content-' + msgId);
+        var editForm = document.getElementById('edit-form-' + msgId);
+        var editBtn = document.querySelector('#message-' + msgId + ' .edit-msg-btn');
+        if (editForm) editForm.style.display = 'none';
+        if (contentDiv) contentDiv.style.display = 'block';
+        if (editBtn) editBtn.style.display = 'inline-block';
+    }
+
+    function saveEdit(btn) {
+        var msgId = btn.getAttribute('data-id');
+        var newContent = document.getElementById('edit-content-' + msgId).value;
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch('/messages/message/edit/' + msgId + '/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ content: newContent })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                var contentDiv = document.getElementById('message-content-' + msgId);
+                contentDiv.innerHTML = newContent.replace(/\n/g, '<br>') + '<span class="edited"> (ред.)</span>';
+                cancelEdit(btn);
+            } else {
+                alert('Ошибка: ' + data.error);
+            }
         });
     }
+
+    function deleteMessage(btn) {
+        var msgId = btn.getAttribute('data-id');
+        if (confirm('Вы уверены, что хотите удалить это сообщение?')) {
+            fetch('/messages/message/delete/' + msgId + '/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    var messageDiv = document.getElementById('message-' + msgId);
+                    if (messageDiv) messageDiv.remove();
+                } else {
+                    alert('Ошибка: ' + data.error);
+                }
+            });
+        }
+    }
+
+    function deleteConversation() {
+        if (confirm('Вы уверены, что хотите удалить весь диалог? Это действие нельзя отменить!')) {
+            fetch('/messages/conversation/delete/{{ conversation.id }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '/messages/inbox/';
+                } else {
+                    alert('Ошибка: ' + data.error);
+                }
+            });
+        }
+    }
+
+    // ==== ОТКРЫТИЕ ПАНЕЛИ (исправлено) ====
+    var pickerBtn = document.getElementById('picker-btn');
+    var universalPicker = document.getElementById('universal-picker');
+
+    if (pickerBtn && universalPicker) {
+        pickerBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (universalPicker.style.display === 'none' || universalPicker.style.display === '') {
+                universalPicker.style.display = 'block';
+            } else {
+                universalPicker.style.display = 'none';
+            }
+        };
+    } else {
+        console.error('Кнопка или панель не найдены');
+    }
+
+    // Переключение вкладок (стикеры / эмодзи)
+    var tabStickers = document.getElementById('tab-stickers');
+    var tabEmojis = document.getElementById('tab-emojis');
+    var stickersContent = document.getElementById('stickers-content');
+    var emojisContent = document.getElementById('emojis-content');
+
+    function activateTab(tab) {
+        if (tab === 'stickers') {
+            stickersContent.style.display = 'block';
+            emojisContent.style.display = 'none';
+            tabStickers.classList.add('active');
+            tabEmojis.classList.remove('active');
+            tabStickers.style.color = '#2c5e2e';
+            tabEmojis.style.color = '#888';
+        } else {
+            stickersContent.style.display = 'none';
+            emojisContent.style.display = 'block';
+            tabEmojis.classList.add('active');
+            tabStickers.classList.remove('active');
+            tabEmojis.style.color = '#2c5e2e';
+            tabStickers.style.color = '#888';
+        }
+    }
+
+tabStickers.onclick = function() { activateTab('stickers'); };
+tabEmojis.onclick = function() { activateTab('emojis'); };
+
+    // ==== ЗАКРЫТИЕ ПРИ КЛИКЕ ВНЕ ====
+    document.addEventListener('click', function(event) {
+        if (universalPicker && !universalPicker.contains(event.target) && event.target !== pickerBtn) {
+            universalPicker.style.display = 'none';
+        }
+    });
+
+    // ==== ФУНКЦИИ ДЛЯ ЭМОДЗИ И СТИКЕРОВ ====
+    function addEmoji(emoji) {
+        var textarea = document.querySelector('.message-input');
+        if (textarea) {
+            var start = textarea.selectionStart;
+            var end = textarea.selectionEnd;
+            var value = textarea.value;
+            textarea.value = value.substring(0, start) + emoji + value.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+            textarea.focus();
+            universalPicker.style.display = 'none';
+        }
+    }
+
+    function insertSticker(sticker) {
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: 'content=[sticker:' + sticker + ']'
+        })
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(html) {
+            // Обновляем список сообщений
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var newMessagesList = doc.querySelector('.messages-list');
+            if (newMessagesList) {
+                document.querySelector('.messages-list').innerHTML = newMessagesList.innerHTML;
+            }
+            scrollToBottom();
+            document.getElementById('universal-picker').style.display = 'none';
+        });
+    }
+
+    // ==== ПРОКРУТКА ВНИЗ ====
+    var messagesWrapper = document.querySelector('.messages-wrapper');
+
+    function scrollToBottom() {
+        if (messagesWrapper) {
+            messagesWrapper.scrollTop = messagesWrapper.scrollHeight;
+        }
+    }
+
+    // Отправка сообщения без перезагрузки страницы
+    function sendMessage(event) {
+        event.preventDefault();  // Отменяем стандартную отправку
+        
+        var textarea = document.querySelector('.message-input');
+        var content = textarea.value.trim();
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        if (!content) return;
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: 'content=' + encodeURIComponent(content)
+        })
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(html) {
+            // Обновляем только список сообщений
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var newMessagesList = doc.querySelector('.messages-list');
+            if (newMessagesList) {
+                document.querySelector('.messages-list').innerHTML = newMessagesList.innerHTML;
+            }
+            textarea.value = '';  // Очищаем поле ввода
+            scrollToBottom();     // Прокрутка вниз
+        });
+    }
+
+    document.getElementById('photo-upload').addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+        
+        var formData = new FormData();
+        formData.append('photo', file);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch('/messages/send_photo/{{ conversation.id }}/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.text();
+            }
+        })
+        .then(function(html) {
+            if (html) {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var newMessagesList = doc.querySelector('.messages-list');
+                if (newMessagesList) {
+                    document.querySelector('.messages-list').innerHTML = newMessagesList.innerHTML;
+                }
+                scrollToBottom();
+            }
+            document.getElementById('photo-upload').value = '';
+        })
+        .catch(function(error) {
+            console.error('Ошибка:', error);
+            alert('Не удалось отправить фото');
+        });
+    });
 </script>
 {% endblock %}

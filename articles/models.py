@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.utils import timezone
+from datetime import timedelta
+from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 
 class Category(models.Model):
     """Категории статей"""
@@ -17,7 +21,24 @@ class Category(models.Model):
     
     def get_absolute_url(self):
         return reverse('category_detail', args=[self.slug])
-
+    
+class Tag(models.Model):
+    """Теги для статей"""
+    name = models.CharField('Название', max_length=50, unique=True)
+    slug = models.SlugField('URL', unique=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('articles:tag_detail', args=[self.slug])
+    
 class Article(models.Model):
     title = models.CharField('Заголовок', max_length=200)
     slug = models.SlugField('URL', unique=True)
@@ -30,8 +51,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
     views = models.PositiveIntegerField('Просмотры', default=0)
     is_published = models.BooleanField('Опубликовано', default=True)
-    created_at = models.DateTimeField(auto_now_add=True)  # добавляем это поле
-    updated_at = models.DateTimeField(auto_now=True) 
+    tags = models.ManyToManyField(Tag, verbose_name='Теги', blank=True, related_name='articles')
 
     def __str__(self):
         return self.title
@@ -47,6 +67,17 @@ class Article(models.Model):
     
     def total_likes(self):
         return self.likes.count()
+    
+    def save(self, *args, **kwargs):
+    # Только при создании генерируем slug, если его нет
+        if not self.pk and not self.slug:
+            self.slug = slugify(self.title) or f"article-{id(self)}"
+        
+        # Защита от пустого slug
+        if not self.slug:
+            raise ValidationError("Slug не может быть пустым")
+        
+        super().save(*args, **kwargs)  # ← важно передать *args, **kwargs
 
 
 class UploadedImage(models.Model):
@@ -88,10 +119,15 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['created_at']
+
+    def can_edit(self):
+        """Можно ли редактировать комментарий (5 минут после создания)"""
+        time_limit = self.created_at + timedelta(minutes=10)
+        return timezone.now() < time_limit
     
     def __str__(self):
         return f'{self.author.username}: {self.content[:50]}'
-
+    
 class Event(models.Model):
     """События и новости деревни (баннер на главной)"""
     title = models.CharField('Заголовок', max_length=200)
@@ -108,3 +144,4 @@ class Event(models.Model):
     
     def __str__(self):
         return self.title
+    

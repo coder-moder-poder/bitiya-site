@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Редактировать профиль - Деревня Бития{% endblock %}
 
 {% block extra_css %}
@@ -43,13 +45,17 @@
         text-align: center;
         margin-bottom: 20px;
     }
+
+    .current-avatar h3 {
+        margin-bottom: 10px;
+    }
     
     .current-avatar img {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #2c5e2e;
+        border: 2px solid #2c5e2e;
     }
     
     .btn-save {
@@ -92,19 +98,33 @@
         color: #666;
         margin-top: 5px;
     }
+
+    .avatar-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+    }
+    
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="edit-container">
-    <h2>✏️ Редактирование профиля</h2>
-    
-    {% if user.profile.avatar %}
+    <h2>Редактирование профиля</h2>
+
     <div class="current-avatar">
-        <img src="{{ user.profile.avatar.url }}" alt="Аватар">
-        <p style="margin-top: 10px; color: #666;">Текущий аватар</p>
+        <h3>Текущий аватар</h3>
+        {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" alt="avatar" class="avatar-preview">
+        {% else %}
+            <img src="/media/avatars/default.png" alt="avatar" class="avatar-preview">
+        {% endif %}
     </div>
-    {% endif %}
+    
+
+    
     
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -142,7 +162,7 @@
             <div class="help-text">Например: Бития, Абатский район, Тюменская область</div>
         </div>
         
-        <button type="submit" class="btn-save">💾 Сохранить изменения</button>
+        <button type="submit" class="btn-save">Сохранить изменения</button>
         <a href="{% url 'accounts:profile' username=user.username %}" class="btn-cancel">Отмена</a>
     </form>
 </div>

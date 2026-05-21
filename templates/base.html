@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="yandex-verification" content="1bbf0002d59d9074"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>{% block title %}Деревня Бития{% endblock %}</title>
     <style>
         * {
@@ -31,7 +32,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border-bottom: 1px solid #d4a373;
         }
-        
+
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -40,7 +41,7 @@
             align-items: center;
             padding: 0 20px;
         }
-        
+
         .logo {
             color: #ffd966;
             font-size: 26px;
@@ -49,19 +50,19 @@
             letter-spacing: 1px;
             transition: all 0.3s;
         }
-        
+
         .logo:hover {
             color: #ffcd38;
             transform: scale(1.02);
         }
-        
+
         .nav-links {
             display: flex;
             gap: 30px;
             align-items: center;
             flex-wrap: wrap;
         }
-        
+
         .nav-links a {
             color: white;
             text-decoration: none;
@@ -71,11 +72,145 @@
             padding: 5px 0;
             border-bottom: 2px solid transparent;
         }
-        
+
         .nav-links a:hover {
             color: #ffd966;
             border-bottom-color: #ffd966;
         }
+
+        .nav-link-with-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link-with-badge:hover {
+            color: #2c5e2e;
+        }
+
+        .badge-inline {
+            background: #b2b2b2;
+            color: #2d5a2a;
+            border-radius: 20px;
+            min-width: 18px;
+            height: 18px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            line-height: 1;
+        }
+
+
+        /* Иконки действий */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .action-icon {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-icon:hover {
+            color: #ffd966;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        .avatar-icon {
+            width: 31px;
+            height: 31px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-icon i {
+            font-size: 26px;
+        }
+
+        /* Кнопки для гостей */
+        .btn-outline {
+            padding: 8px 18px;
+            border: 1px solid #ffffff;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #ffffff;
+            background: transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: #ffffff;
+            color: #2c5e2e;
+        }
+
+        .btn-primary {
+            padding: 8px 18px;
+            border: 1px solid #ffffff;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #ffffff;
+            color: #2c5e2e;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 800px) {
+            .nav-links {
+                gap: 12px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .action-icon {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
         
         .main-content {
             flex: 1;
@@ -125,15 +260,6 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             background: linear-gradient(135deg, #3c6e38 0%, #2a4f27 100%);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #d4a373 0%, #c28b5a 100%);
-            color: #2c2b28;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #e0b58a 0%, #d4a373 100%);
         }
         
         .alert {
@@ -246,6 +372,37 @@
                 padding: 25px;
             }
         }
+
+        /* Кнопка "Наверх" */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: #2c5e2e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        #scrollToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #scrollToTopBtn:hover {
+            background-color: #1e401f;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -253,16 +410,44 @@
     <div class="navbar">
         <div class="nav-container">
             <a href="{% url 'home' %}" class="logo">Битияgram</a>
+            
             <div class="nav-links">
                 <a href="{% url 'home' %}">Главная</a>
                 <a href="{% url 'articles:article_list' %}">Все статьи</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'messaging:inbox' %}">Сообщения</a>
-                    <a href="{% url 'accounts:profile' username=user.username %}">Мой профиль</a>
-                    <a href="#" onclick="showLogoutModal(event)">Выйти</a>
+                    <a href="{% url 'accounts:user_search' %}">Поиск</a>
+                    <a href="{% url 'messaging:inbox' %}" id="messages-link" class="nav-link-with-badge">
+                        Сообщения
+                        {% if unread_messages_count > 0 %}
+                            <span id="messages-badge" class="badge-inline">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
+            
+            <div class="header-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:notifications' %}" class="action-icon" title="Уведомления" id="notif-icon">
+                        <i class="fas fa-bell"></i>
+                        {% if unread_count > 0 %}
+                            <span id="notif-badge" class="badge">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    <a href="{% url 'accounts:profile' username=user.username %}" class="action-icon profile-icon" title="Мой профиль">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar-icon">
+                        {% else %}
+                            <img src="/media/avatars/default.png" alt="Avatar" class="avatar-icon">
+                        {% endif %}
+                    </a>
+                    
+                    <a href="#" onclick="showLogoutModal(event)" class="action-icon" title="Выйти">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
                 {% else %}
-                    <a href="{% url 'accounts:login' %}">Войти</a>
-                    <a href="{% url 'accounts:register' %}">Регистрация</a>
+                    <a href="{% url 'accounts:login' %}" class="btn-outline">Войти</a>
+                    <a href="{% url 'accounts:register' %}" class="btn-primary">Регистрация</a>
                 {% endif %}
             </div>
         </div>
@@ -299,6 +484,8 @@
             </div>
         </div>
     </div>
+    <!-- Кнопка "Наверх" -->
+    <button onclick="scrollToTop()" id="scrollToTopBtn" title="Наверх">↑</button>
     
     <script>
         function showLogoutModal(event) {
@@ -321,8 +508,83 @@
                 modal.style.display = 'none';
             }
         }
+
+        // Получаем кнопку
+        const scrollBtn = document.getElementById("scrollToTopBtn");
+        
+        // Показываем кнопку при прокрутке вниз
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.classList.add("show");
+            } else {
+                scrollBtn.classList.remove("show");
+            }
+        };
+        
+        // Плавная прокрутка наверх
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        function updateMessageCounter() {
+            fetch('/messages/unread_count/')
+                .then(response => response.json())
+                .then(data => {
+                    const badgeSpan = document.getElementById('messages-badge');
+                    const parentLink = document.getElementById('messages-link');
+                    
+                    if (data.messages_count > 0) {
+                        if (badgeSpan) {
+                            badgeSpan.textContent = data.messages_count;
+                        } else if (parentLink) {
+                            const newBadge = document.createElement('span');
+                            newBadge.id = 'messages-badge';
+                            newBadge.className = 'badge';
+                            newBadge.textContent = data.messages_count;
+                            parentLink.appendChild(newBadge);
+                        }
+                    } else if (badgeSpan) {
+                        badgeSpan.remove();
+                    }
+                });
+        }
+        setInterval(updateMessageCounter, 10000);
+        updateMessageCounter();
+
+        function updateNotificationsCount() {
+            fetch('/accounts/unread_notifications_count/')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notif-badge');
+                    if (data.count > 0) {
+                        if (badge) {
+                            badge.textContent = data.count;
+                        } else {
+                            const icon = document.getElementById('notif-icon');
+                            if (icon) {
+                                const newBadge = document.createElement('span');
+                                newBadge.id = 'notif-badge';
+                                newBadge.className = 'badge';
+                                newBadge.textContent = data.count;
+                                icon.appendChild(newBadge);
+                            }
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                });
+        }
+
+        // Обновляем каждые 10 секунд
+        setInterval(updateNotificationsCount, 10000);
+        // Также при загрузке страницы
+        updateNotificationsCount();
     </script>
     
     {% block extra_js %}{% endblock %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>

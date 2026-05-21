@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="notifications-header">
+        <img src="/static/images/bell.png" alt="Уведомления" class="notification-bell">
+        <h1>Уведомления</h1>
+    </div>
+    
+    <div class="notification-filters">
+        <a href="?filter=all" class="filter-btn {% if filter == 'all' or not filter %}active{% endif %}">Все</a>
+        <a href="?filter=unread" class="filter-btn {% if filter == 'unread' %}active{% endif %}">Непрочитанные</a>
+        <a href="?filter=friend" class="filter-btn {% if filter == 'friend' %}active{% endif %}">Друзья</a>
+        <a href="?filter=gift" class="filter-btn {% if filter == 'gift' %}active{% endif %}">Подарки</a>
+        <a href="?filter=view" class="filter-btn {% if filter == 'view' %}active{% endif %}">Просмотры</a>
+    </div>
+    
+    {% if filter == 'view' %}
+        <!-- Блок просмотров профиля -->
+        <div class="profile-views-section">
+            {% if profile_views %}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Кто заходил</h2>
+                    <form method="post" action="{% url 'accounts:clear_profile_views' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-clear" onclick="return confirm('Очистить всю историю просмотров?')">
+                            Очистить историю
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="profile-views-list">
+                    {% for view in profile_views %}
+                        <div class="notification-item">
+                            <div class="notification-icon">
+                                <img src="/static/images/eye.png" alt="Просмотр" class="notification-icon-img">
+                            </div>
+                            <div class="notification-content">
+                                <p>
+                                    <a href="{% url 'accounts:profile' view.viewer.username %}">
+                                        {{ view.viewer.first_name|default:view.viewer.username }}
+                                    </a> 
+                                    заходил(а) на вашу страницу
+                                </p>
+                                <span class="notification-time">{{ view.viewed_at|timesince }} назад</span>
+                            </div>
+                            <div class="notification-actions">
+                                <a href="{% url 'accounts:profile' view.viewer.username %}" class="notification-link">→</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-notifications">
+                    <p>Пока никто не заходил на вашу страницу</p>
+                    <p>Напишите больше статей о деревне Бития, и люди обязательно заинтересуются!</p>
+                </div>
+            {% endif %}
+        </div>
+        
+    {% elif notifications %}
+        <!-- Блок обычных уведомлений -->
+        <div class="notifications-list">
+            {% for notification in notifications %}
+                <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-icon">
+                        {% if notification.notification_type == 'friend_request' or notification.notification_type == 'friend_accepted' %}
+                            <img src="/static/images/Vector.svg" alt="Друзья" class="notification-icon-img">
+                        {% elif notification.notification_type == 'gift' %}
+                            <img src="/static/images/Share.svg" alt="Подарок" class="notification-icon-img">
+                        {% elif notification.notification_type == 'profile_view' %}
+                            <img src="/static/images/view.png" alt="Просмотр" class="notification-icon-img">
+                        {% elif notification.notification_type == 'message' %}
+                            💬
+                        {% else %}
+                            📌
+                        {% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <p>{{ notification.text }}</p>
+                        <span class="notification-time">{{ notification.created_at|timesince }} назад</span>
+                    </div>
+                    <div class="notification-actions">
+                        {% if notification.notification_type == 'friend_request' %}
+                            {% if not notification.is_read %}
+                                <a href="{% url 'accounts:accept_friend_request' notification.id %}" class="btn-accept">Принять</a>
+                                <a href="{% url 'accounts:reject_friend_request' notification.id %}" class="btn-reject">Отклонить</a>
+                            {% else %}
+                                {% if notification.friend_request_status == 'accepted' %}
+                                    <span class="friend-status accepted">✓ Вы уже друзья</span>
+                                {% elif notification.friend_request_status == 'rejected' %}
+                                    <span class="friend-status rejected">Заявка отклонена</span>
+                                {% else %}
+                                    <span class="friend-status">✓ Обработано</span>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if not notification.is_read %}
+                                <a href="{% url 'accounts:mark_notification_read' notification.id %}" class="mark-read">✓</a>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if notification.link %}
+                            <a href="{{ notification.link }}" class="notification-link">→</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1&filter={{ filter }}">« Первая</a>
+                    <a href="?page={{ page_obj.previous_page_number }}&filter={{ filter }}">‹ Назад</a>
+                {% endif %}
+                <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&filter={{ filter }}">Вперёд ›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}&filter={{ filter }}">Последняя »</a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+    {% else %}
+        <div class="empty-notifications">
+            <p>Здесь пока нет уведомлений</p>
+            <p>Здесь будут появляться заявки в друзья, подарки и другие события</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .notifications-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .sad-notification {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .notification-sad {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+
+    .notification-bell {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+
+    .notification-icon-img {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+    }
+
+    .notifications-header h1 {
+        margin: 0;
+        font-size: 32px;
+        color: #1e1e1e;
+    }
+
+    .notification-filters {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    .filter-btn {
+        border: 1px solid #2c5e2e;
+        padding: 5px 13px;
+        background: #ffffff;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #333;
+    }
+    .filter-btn.active {
+        background: #2c5e2e;
+        color: white;
+    }
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .notification-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        margin-top: 4px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        background: white;
+    }
+    .notification-item.unread {
+        background: #f0f7ff;
+        border-left: 4px solid #007bff;
+    }
+    .notification-icon {
+        font-size: 30px;
+    }
+    .notification-content {
+        flex: 1;
+    }
+    .notification-content p {
+        margin: 0 0 5px 0;
+    }
+    .notification-time {
+        font-size: 12px;
+        color: #999;
+    }
+    .notification-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .mark-read {
+        background: #f6f5f5;
+        border: 1px solid #2c5e2e;
+        color: #2c5e2e;
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .mark-read:hover {
+        background: #cccccc;
+    }
+
+    .notification-link {
+        background: #2c5e2e;
+        color: white;
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        
+    }
+
+    .notification-link:hover {
+        background: #1d461e;
+    }
+
+    .empty-notifications {
+        text-align: center;
+        padding: 50px;
+        color: #999;
+    }
+
+    .friend-status {
+        color: #2c5e2e;
+        font-weight: bold;
+        padding: 5px 10px;
+        background: #e8f5e9;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    friend-status.accepted {
+        color: #2c5e2e;
+        background: #e8f5e9;
+    }
+    .friend-status.rejected {
+        color: #dc3545;
+        background: #ffeaea;
+    }
+
+    .btn-clear {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+    .btn-clear:hover {
+        background: #c82333;
+    }
+    .profile-views-section {
+        margin-top: 20px;
+    }
+
+</style>
+{% endblock %}

@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+
+
 {% block title %}Профиль {{ profile_user.username }} - Деревня Бития{% endblock %}
 
 {% block extra_css %}
@@ -22,6 +26,11 @@
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid #2c5e2e;
+    }
+
+    .default-avatar {
+        background-color: #e0e0e0;
+        /* если картинка не загрузится, будет серый фон */
     }
     
     .profile-info {
@@ -119,11 +128,115 @@
         font-size: 14px;
         color: #999;
     }
+
+    .action-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+    }
     
+    .menu-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .menu-dots {
+        background: #f0f0f0;
+        border: none;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #2c5e2e;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .menu-dots:hover {
+        background: #e0e0e0;
+        transform: scale(1.05);
+    }
+
+    .user-menu {
+        position: absolute;
+        top: 45px;
+        left: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        min-width: 190px;
+        z-index: 1000;
+        overflow: hidden;
+        display: none;
+    }
+
+    .user-menu.show {
+        display: block;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+        background: white;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .menu-item:hover {
+        background: #f5f5f5;
+    }
+
+    .delete-friend {
+        color: #dc3545;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
     .empty-message {
         text-align: center;
         padding: 40px;
         color: #999;
+    }
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .message-btn,
+    .friend-btn,
+    .edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
     }
     
     .create-btn {
@@ -132,27 +245,248 @@
     }
     
     .message-btn {
-        text-align: center;
-        margin-bottom: 20px;
+        background: #ffd966;
+        color: #2c5e2e;
     }
+
+    .friend-btn {
+        background: #2c5e2e;
+        color: white;
+    }
+
+    .friend-btn.disabled,
+    .friend-btn.pending {
+        background: #aaa;
+        cursor: default;
+    }
+
+    .edit-btn {
+        background: #2c5e2e;
+        color: white;
+        margin-top: 20px;
+        display: inline-block;
+    }
+
+    .message-btn:hover {
+        background: #ffc107;
+        transform: translateY(-2px);
+    }
+
+    .friend-btn:hover, .edit-btn:hover {
+        background: #1e401f;
+    }
+
+    .friend-btn:not(.disabled):not(.pending):hover {
+        background: #1e401f;
+        transform: translateY(-2px);
+    }
+
+    /* Список друзей - общий белый контейнер */
+    .profile-friends-container {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .friends-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .friends-header h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .all-friends-link {
+        font-size: 14px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .friends-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .friend-card {
+        text-align: center;
+        width: 80px;
+    }
+
+    .friend-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .friend-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e0e0e0;
+        margin-bottom: 8px;
+    }
+
+    .friend-name {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #333;
+    }
+
+    .friends-more {
+        margin-top: 20px;
+        text-align: center;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .more-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .no-friends {
+        color: #999;
+        text-align: center;
+        padding: 30px;
+        margin: 0;
+    }
+
+    .gift-btn {
+        background: #ffd966;
+        color: #2c5e2e;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .floating-gift {
+        position: absolute;
+        bottom: -22px;
+        right: -10px;
+        background: white;
+        width: 78px;
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+        overflow: hidden;  /* обрезаем всё, что выходит за пределы круга */
+        padding: 0;
+    }
+
+    .gift-overlay {
+        width: 100%;       /* полная ширина контейнера */
+        height: 100%;      /* полная высота контейнера */
+        object-fit: cover; /* картинка заполняет весь круг, обрезая лишнее */
+        display: block;
+    }
+
+    .floating-gift-link {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .sticker-icon {
+        width: 20px;           /* Замените на нужный размер */
+        height: 20px;
+        object-fit: contain;
+        margin-right: 8px;     /* Отступ между иконкой и текстом */
+        vertical-align: middle; /* Выравнивание по центру строки */
+    }
+
+    .profile-meta p {
+        display: flex;
+        align-items: center;    /* Вертикальное выравнивание */
+        margin: 8px 0;          /* Отступы между строками */
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(71, 158, 73, 0.7);
+        }
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 10px rgba(44, 94, 46, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(44, 94, 46, 0);
+        }
+    }
+
+    @keyframes fadeSlide {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Кнопка отправки сообщения (только если это не свой профиль) -->
-{% if user.is_authenticated and user != profile_user %}
-<div class="message-btn">
-    <a href="{% url 'messaging:send_message' username=profile_user.username %}" class="btn btn-primary" style="background: #ffd966; color: #2c5e2e; display: inline-block; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
-        💬 Написать сообщение {{ profile_user.first_name|default:profile_user.username }}
-    </a>
-</div>
-{% endif %}
-
 <div class="profile-header">
-    {% if profile_user.profile.avatar %}
-        <img src="{{ profile_user.profile.avatar.url }}" alt="{{ profile_user.username }}" class="profile-avatar">
-    {% else %}
-        <img src="https://via.placeholder.com/150x150?text=Avatar" alt="Аватар" class="profile-avatar">
+    {% if received_gifts %}
+        <div class="avatar-wrapper">
+            <img src="{% if profile_user.profile.avatar %}{{ profile_user.profile.avatar.url }}{% else %}/media/avatars/default.png{% endif %}" alt="avatar" class="avatar">
+            
+            <a href="{% url 'accounts:gifts_gallery' profile_user.username %}" class="floating-gift-link">
+                <div class="floating-gift" id="floatingGift">
+                    <img id="giftImage" src="{{ received_gifts.0.gift.image.url }}" class="gift-overlay">
+                </div>
+            </a>
+        </div>
+        {% else %}
+        <div class="avatar-wrapper">
+            <img src="{% if profile_user.profile.avatar %}{{ profile_user.profile.avatar.url }}{% else %}/media/avatars/default.png{% endif %}" alt="avatar" class="avatar">
+        </div>
     {% endif %}
     
     <div class="profile-info">
@@ -165,16 +499,95 @@
         
         <div class="profile-meta">
             {% if profile_user.profile.birth_place %}
-                <p>📍 Откуда родом: {{ profile_user.profile.birth_place }}</p>
+                <p>
+                    <img src="{% static 'images/UserLocation.svg' %}" alt="birth place" class="sticker-icon">
+                    Откуда родом: {{ profile_user.profile.birth_place }}
+                </p>
             {% endif %}
-            <p>📅 Зарегистрирован: {{ profile_user.date_joined|date:"d.m.Y" }}</p>
-            <p>📝 Написано статей: {{ articles|length }}</p>
+            
+            <p>
+                <img src="{% static 'images/UserJoinDate.svg' %}" alt="registered" class="sticker-icon">
+                Зарегистрирован: {{ profile_user.date_joined|date:"d.m.Y" }}
+            </p>
+            
+            <p>
+                <img src="{% static 'images/UserProfessionalCategory.svg' %}" alt="articles count" class="sticker-icon">
+                Написано статей: {{ articles|length }}
+            </p>
+        </div>
+                
+        <div class="action-bar">
+            <!-- Три точки (меню) -->
+            {% if user.is_authenticated and user != profile_user %}
+                <div class="menu-container">
+                    <img src="/static/images/Menu.svg" id="userMenuBtn" class="menu-dots">
+                    <div id="userMenu" class="user-menu">
+                        <a href="{% url 'accounts:profile' profile_user.username %}" class="menu-item">Подробнее о профиле</a>
+                        <a href="{% url 'accounts:send_gift' profile_user.username %}" class="menu-item">Отправить подарок</a>
+                        {% if is_friend %}
+                            <button class="menu-item delete-friend" data-username="{{ profile_user.username }}">Удалить из друзей</button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Кнопки действий (без кнопки подарка) -->
+            {% if user.is_authenticated and user != profile_user %}
+                <div class="action-buttons">
+                    <a href="{% url 'messaging:conversation_with_user' profile_user.username %}" class="message-btn">
+                        Написать сообщение
+                    </a>
+                    
+                    {% if is_friend %}
+                        <button class="friend-btn disabled" disabled>✓ Вы друзья</button>
+                    {% elif has_pending_request %}
+                        <button class="friend-btn pending" disabled>⏳ Заявка отправлена</button>
+                    {% else %}
+                        <a href="{% url 'accounts:send_friend_request' profile_user.username %}" class="friend-btn">
+                            Добавить в друзья
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            {% if user == profile_user %}
+                <a href="{% url 'accounts:profile_edit' %}" class="edit-btn">Редактировать профиль</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Список друзей -->
+<div class="profile-friends-container">
+    <div class="friends-header">
+        <h3>Друзья</h3>
+        <a href="{% url 'accounts:friends_list' profile_user.username %}" class="all-friends-link">Все друзья →</a>
+    </div>
+    
+    {% if friends %}
+        <div class="friends-list">
+            {% for friend in friends|slice:":7" %}
+                <div class="friend-card">
+                    <a href="{% url 'accounts:profile' friend.username %}">
+                        {% if friend.profile.avatar %}
+                            <img src="{{ friend.profile.avatar.url }}" alt="avatar" class="friend-avatar">
+                        {% else %}
+                            <img src="/media/avatars/default.png" alt="avatar" class="friend-avatar">
+                        {% endif %}
+                        <span class="friend-name">{{ friend.first_name|default:friend.username }}</span>
+                    </a>
+                </div>
+            {% endfor %}
         </div>
         
-        {% if user == profile_user %}
-            <a href="{% url 'accounts:profile_edit' %}" class="edit-btn">✏️ Редактировать профиль</a>
+        {% if friends.count > 7 %}
+            <div class="friends-more">
+                <a href="{% url 'accounts:friends_list' profile_user.username %}" class="more-link">Показать всех друзей →</a>
+            </div>
         {% endif %}
-    </div>
+    {% else %}
+        <p class="no-friends">У Вас пока нет друзей</p>
+    {% endif %}
 </div>
 
 <div class="section">
@@ -202,7 +615,7 @@
             <div class="empty-message">
                 <p>{{ profile_user.username }} ещё не написал ни одной статьи.</p>
                 {% if user == profile_user %}
-                    <p>Поделитесь своими воспоминаниями о деревне Бития!</p>
+                    <p>Поделитесь своими воспоминаниями</p>
                     <div class="create-btn">
                         <a href="{% url 'articles:create_article' %}" class="btn btn-primary">Написать первую статью</a>
                     </div>
@@ -217,4 +630,66 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+    let gifts = {{ gifts_json|safe }};
+
+    const giftImage = document.getElementById('giftImage');
+    if (giftImage && gifts.length > 1) {
+        let currentIndex = 0;
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % gifts.length;
+            giftImage.style.opacity = '0';
+            setTimeout(() => {
+                giftImage.src = gifts[currentIndex].url;
+                giftImage.alt = gifts[currentIndex].name;
+                giftImage.style.opacity = '1';
+            }, 300);
+        }, 4000);
+    }
+
+    // Открытие/закрытие меню с тремя точками
+    const menuBtn = document.getElementById('userMenuBtn');
+    const userMenu = document.getElementById('userMenu');
+
+    if (menuBtn) {
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenu.classList.toggle('show');
+        });
+    }
+
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', (e) => {
+        if (userMenu && !userMenu.contains(e.target) && e.target !== menuBtn) {
+            userMenu.classList.remove('show');
+        }
+    });
+
+    // Удаление из друзей (AJAX)
+    const deleteFriendBtn = document.querySelector('.delete-friend');
+    if (deleteFriendBtn) {
+        deleteFriendBtn.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            if (confirm(`Удалить ${username} из друзей?`)) {
+                fetch(`/accounts/remove_friend/${username}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();  // обновляем страницу после удаления
+                    } else {
+                        alert('Ошибка: ' + data.error);
+                    }
+                });
+            }
+        });
+    }
+</script>
+
 {% endblock %}

@@ -42,9 +42,9 @@
     .btn-save {
         background: #2c5e2e;
         color: white;
-        padding: 12px 30px;
+        padding: 12px 28px;
         border: none;
-        border-radius: 5px;
+        border-radius: 25px;
         cursor: pointer;
         font-size: 16px;
         margin-right: 10px;
@@ -53,9 +53,9 @@
     .btn-cancel {
         background: #999;
         color: white;
-        padding: 12px 30px;
+        padding: 12px 28px;
         border: none;
-        border-radius: 5px;
+        border-radius: 25px;
         cursor: pointer;
         text-decoration: none;
         display: inline-block;
@@ -84,6 +84,22 @@
     .django-ckeditor-widget {
         width: 100% !important;
     }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-left: 390px;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
 </style>
 {% endblock %}
 
@@ -93,6 +109,7 @@
     
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ form.is_published.as_hidden }}
         
         <div class="form-group">
             <label>Заголовок</label>
@@ -128,6 +145,7 @@
         
         <button type="submit" class="btn-save">Сохранить изменения</button>
         <a href="{% url 'articles:article_detail' slug=article.slug %}" class="btn-cancel">Отмена</a>
+        <a href="{% url 'articles:delete_article' article.slug %}" class="btn-danger">Удалить статью</a>
     </form>
 </div>
 {% endblock %}

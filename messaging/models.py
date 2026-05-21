@@ -32,6 +32,7 @@ class Message(models.Model):
     content = models.TextField('Сообщение')
     is_read = models.BooleanField('Прочитано', default=False)
     created_at = models.DateTimeField('Отправлено', auto_now_add=True)
+    edited_at = models.DateTimeField('Отредактировано', null=True, blank=True)
     
     class Meta:
         verbose_name = 'Сообщение'
@@ -45,3 +46,11 @@ class Message(models.Model):
         if not self.is_read:
             self.is_read = True
             self.save()
+
+    def can_edit(self):
+        """Можно ли редактировать сообщение (5 минут после отправки)"""
+        from django.utils import timezone
+        from datetime import timedelta
+        time_limit = self.created_at + timedelta(minutes=5)
+        return timezone.now() < time_limit
+

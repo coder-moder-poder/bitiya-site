@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+
+    .search-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .search-icon {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+
+    .search-header h1 {
+        margin: 0;
+        font-size: 32px;
+        color: #1e1e1e;
+    }
+
+    /* Поиск пользователей */
+    .search-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    /* Контейнер для поиска */
+    .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    /* Поле ввода с отступом для иконки */
+    .search-input {
+        flex: 1;
+        padding: 12px 12px 12px 40px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #2c5e2e;
+    }
+
+    /* Иконка внутри поля */
+    .search-input-icon {
+        position: absolute;
+        left: 12px;
+        width: 18px;
+        height: 18px;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Кнопка поиска */
+    .search-btn {
+        background: #2c5e2e;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 24px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+
+    .search-btn:hover {
+        background: #1e401f;
+    }
+
+    .container h2{
+        padding-bottom:10px
+    }
+
+    .users-list {
+        display: flex;
+        flex-direction: column;
+        width: 800px
+    }
+    .user-card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 16px;
+        transition: box-shadow 0.3s;
+    }
+    .user-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .user-link {
+        display: flex;
+        gap: 15px;
+        text-decoration: none;
+        color: inherit;
+    }
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .friend-avatar{
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .user-info strong {
+        font-size: 18px;
+        display: block;
+    }
+    .username {
+        color: gray;
+        font-size: 14px;
+    }
+    .user-bio {
+        margin-top: 5px;
+        color: #555;
+        font-size: 14px;
+    }
+    .no-results {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+
+    @media (max-width: 600px) {
+        .search-wrapper {
+            max-width: 100%;
+        }
+        
+        .search-input {
+            padding: 10px 10px 10px 36px;
+            font-size: 13px;
+        }
+        
+        .search-input-icon {
+            width: 16px;
+            height: 16px;
+            left: 10px;
+        }
+        
+        .search-btn {
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+    }
+
+</style>
+
+<div class="container">
+    <div class="search-header">
+        <img src="/static/images/user.png" alt="Поиск" class="search-icon">
+        <h1>Поиск пользователей</h1>
+    </div>
+    
+    <form method="get" action="{% url 'accounts:user_search' %}" class="search-form">
+        <div class="search-wrapper">
+            <img src="/static/images/search.png" alt="Поиск" class="search-input-icon">
+            <input type="text" name="q" list="user-list" placeholder="Введите имя или никнейм..." value="{{ query }}" class="search-input" autocomplete="off">
+            <button type="submit" class="search-btn">Найти</button>
+        </div>
+        <datalist id="user-list">
+            {% for user in all_users %}
+                <option value="{{ user.username }}">{{ user.first_name|default:user.username }}</option>
+            {% endfor %}
+        </datalist>
+    </form>
+    
+    {% if query %}
+        <h2>Результаты поиска: "{{ query }}"</h2>
+        
+        {% if users %}
+            <div class="users-list">
+                {% for user in users %}
+                    <div class="user-card">
+                        <a href="{% url 'accounts:profile' user.username %}" class="user-link">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" alt="avatar" class="user-avatar">
+                            {% else %}
+                                <img src="/media/avatars/default.png" alt="avatar" class="friend-avatar">
+                            {% endif %}
+                            <div class="user-info">
+                                <strong>{{ user.first_name|default:user.username }}</strong>
+                                <span class="username">@{{ user.username }}</span>
+                                {% if user.profile.bio %}
+                                    <p class="user-bio">{{ user.profile.bio|truncatechars:80 }}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <p>Пользователи не найдены</p>
+                <p>Попробуйте изменить запрос</p>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

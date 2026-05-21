@@ -22,6 +22,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://coder-moder-poder-bitiya-site-4c6e.twc1.net',
     'https://bitiyagram.ru',
     'http://bitiyagram.ru',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
 ]
 
 # Добавьте все ваши приложения
@@ -81,6 +83,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.unread_notifications_count',
+                'messaging.context_processors.unread_messages_count',
+                'accounts.context_processors.profile_views_count',
             ],
         },
     },
@@ -90,8 +95,12 @@ WSGI_APPLICATION = 'Bitiya_Site.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'default_db',                             # ← Имя базы данных
+        'USER': 'gen_user',                           # ← Имя пользователя
+        'PASSWORD': '4no7Q1~$z*bWo^',               # ← Пароль
+        'HOST': '186.246.7.211',    # ← Хост (скопируйте его!)
+        'PORT': '5432',                                  # ← Порт
     }
 }
 
@@ -115,8 +124,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_URL = 'login'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

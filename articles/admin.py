@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Category, Article, Comment, Event, Like
+from .models import Tag
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -13,6 +14,7 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ['views']
+    filter_horizontal = ['tags']
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -31,3 +33,9 @@ class LikeAdmin(admin.ModelAdmin):
     list_display = ['user', 'article', 'created_at']
     list_filter = ['created_at']
     search_fields = ['user__username', 'article__title']
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'created_at']
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['name']

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>📨 Заявки в друзья</h1>
+    
+    {% if received_requests %}
+        <div class="requests-list">
+            {% for req in received_requests %}
+                <div class="request-card">
+                    <div class="request-info">
+                        <strong>{{ req.from_user.first_name|default:req.from_user.username }}</strong>
+                        <span class="username">@{{ req.from_user.username }}</span>
+                        <span class="date">{{ req.created_at|date:"d.m.Y" }}</span>
+                    </div>
+                    <div class="request-actions">
+                        <a href="{% url 'accounts:accept_friend_request' req.id %}" class="btn-accept">✅ Принять</a>
+                        <a href="{% url 'accounts:reject_friend_request' req.id %}" class="btn-reject">❌ Отклонить</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>😔 У вас нет новых заявок в друзья</p>
+    {% endif %}
+</div>
+
+<style>
+    .requests-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .request-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .request-info strong {
+        font-size: 18px;
+        display: block;
+    }
+    .username {
+        color: gray;
+        font-size: 14px;
+    }
+    .date {
+        color: #999;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+    .btn-accept, .btn-reject {
+        padding: 5px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-left: 10px;
+    }
+    .btn-accept {
+        background: #28a745;
+        color: white;
+    }
+    .btn-reject {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+{% endblock %}
