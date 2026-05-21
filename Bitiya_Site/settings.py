@@ -15,7 +15,8 @@ ALLOWED_HOSTS = ['bitiyagram.ru',
                 'www.bitiyagram.ru',
                 'coder-moder-poder-bitiya-site-4c6e.twc1.net',
                 '127.0.0.1', 
-                'localhost']
+                'localhost',
+                '172.18.0.6',]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://coder-moder-poder-bitiya-site-4c6e.twc1.net',
