@@ -16,6 +16,7 @@ from .models import Gift, UserGift
 import json
 from .models import ProfileView 
 from datetime import timedelta
+from .models import Profile
 
 def register(request):
     """Регистрация нового пользователя"""
@@ -23,6 +24,10 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            # 👇 СОЗДАЁМ ПРОФИЛЬ СРАЗУ ПОСЛЕ РЕГИСТРАЦИИ
+            Profile.objects.get_or_create(user=user)
+            
             login(request, user)
             messages.success(request, f'Добро пожаловать, {user.username}!')
             return redirect('home')
@@ -116,6 +121,8 @@ def profile_view(request, username):
 
 @login_required
 def profile_edit(request):
+    # 👇 ГАРАНТИРУЕМ, ЧТО ПРОФИЛЬ ЕСТЬ
+    Profile.objects.get_or_create(user=request.user)
     """Редактирование профиля"""
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
