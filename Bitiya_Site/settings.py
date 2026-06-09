@@ -18,8 +18,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '217.18.60.136',
     'coder-moder-poder-bitiya-site-5e51.twc1.net',
-    '172.18.0.6',
-    '172.18.0.4',
+    '172.18.0.0/24',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
