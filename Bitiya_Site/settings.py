@@ -11,15 +11,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'bitiyagram.ru',
-    'www.bitiyagram.ru',
-    '127.0.0.1',
-    'localhost',
-    '217.18.60.136',
-    'coder-moder-poder-bitiya-site-5e51.twc1.net',
-    '172.18.0.0/24',
-]
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://coder-moder-poder-bitiya-site-4c6e.twc1.net',
@@ -102,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'default_db',                             # ← Имя базы данных
         'USER': 'gen_user',                           # ← Имя пользователя
-        'PASSWORD': '4no7Q1~$z*bWo^',               # ← Пароль
+        'PASSWORD': 'bitiyashalashina',               # ← Пароль
         'HOST': '186.246.7.211',    # ← Хост (скопируйте его!)
         'PORT': '5432',                                  # ← Порт
     }
