@@ -89,18 +89,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Bitiya_Site.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'default_db',
         'USER': 'gen_user',
-        'PASSWORD': 'bitiyashalashina',  # без спецсимволов!
-        'HOST': 'c86dc81382b4abbf8716b149.twc1.net',  # используйте домен, а не IP
+        'PASSWORD': 'bitiyashalashina',
+        'HOST': '186.246.7.211',  # используйте IP вместо домена
         'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',  # или 'verify-full' для максимальной безопасности
-        }
+        # 'OPTIONS': {
+        #     'sslmode': 'require',
+        # }
     }
 }
 
