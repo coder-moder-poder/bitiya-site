@@ -95,9 +95,9 @@ DATABASES = {
         'NAME': 'default_db',
         'USER': 'gen_user',
         'PASSWORD': 'bitiyashalashina',
-        'HOST': '186.246.7.211',  # используйте IP вместо домена
+        'HOST': 'c86dc81382b4abbf8716b149.twc1.net',  # ← ИСПОЛЬЗУЙТЕ ДОМЕН, А НЕ IP
         'PORT': '5432',
-        # 'OPTIONS': {
+        # 'OPTIONS': {  # ПОКА ОТКЛЮЧАЕМ SSL ДЛЯ ТЕСТА
         #     'sslmode': 'require',
         # }
     }
