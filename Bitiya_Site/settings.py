@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -88,18 +88,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Bitiya_Site.wsgi.application'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'default_db',
-        'USER': 'gen_user',
-        'PASSWORD': 'bitiyashalashina',
-        'HOST': 'c86dc81382b4abbf8716b149.twc1.net',  # ← ИСПОЛЬЗУЙТЕ ДОМЕН, А НЕ IP
+        'USER': 'postgres',
+        'PASSWORD': 'bitiyashalashina',  # Если пароль другой, укажите свой
+        'HOST': 'localhost',
         'PORT': '5432',
-        # 'OPTIONS': {  # ПОКА ОТКЛЮЧАЕМ SSL ДЛЯ ТЕСТА
-        #     'sslmode': 'require',
-        # }
     }
 }
 
